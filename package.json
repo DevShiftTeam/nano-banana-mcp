@@ -17,6 +17,9 @@
     "lint": "tsc --noEmit"
   },
   "keywords": ["mcp", "gemini", "image-generation", "ai", "google"],
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "license": "MIT",
   "dependencies": {
     "@google/genai": "^1.0.0",
