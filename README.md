@@ -7,7 +7,7 @@ MCP server for AI image generation and editing using Google Gemini image models.
 | Product | Model ID | Default |
 |---------|----------|---------|
 | Nano Banana 2 | `gemini-3.1-flash-image-preview` | Yes |
-| Nano Banana 2 | `gemini-2.5-flash-image` | No |
+| Nano Banana | `gemini-2.5-flash-image` | No |
 | Nano Banana Pro | `gemini-3-pro-image-preview` | No |
 
 ## Setup
