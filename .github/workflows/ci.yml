@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm run build
+
+      - run: npm run test:coverage
+
+      - name: Check coverage threshold
+        run: |
+          npx vitest run --coverage --reporter=json --outputFile=coverage.json 2>/dev/null
+          node -e "
+            const r = require('./coverage/coverage-final.json');
+            const files = Object.values(r);
+            let totalS = 0, coveredS = 0;
+            for (const f of files) {
+              for (const [k, v] of Object.entries(f.s)) {
+                totalS++;
+                if (v > 0) coveredS++;
+              }
+            }
+            const pct = (coveredS / totalS * 100).toFixed(1);
+            console.log('Statement coverage: ' + pct + '%');
+            if (pct < 80) {
+              console.error('Coverage below 80% threshold');
+              process.exit(1);
+            }
+          "
+
+      - name: Upload coverage
+        if: matrix.node-version == 20
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
